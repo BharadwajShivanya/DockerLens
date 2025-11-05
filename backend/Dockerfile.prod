@@ -1,0 +1,29 @@
+# backend/Dockerfile.prod
+FROM python:3.10-slim
+
+# Create a user to avoid running as root
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+WORKDIR /app
+
+# Install system deps for docker (if needed) - keep minimal
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Copy and install python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy app
+COPY . .
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 5000
+
+# Use gunicorn for production
+CMD ["gunicorn", "-c", "gunicorn_conf.py", "app:app"]
+
