@@ -1,50 +1,35 @@
-version: "3.8"
-
 services:
-  nginx:
-    image: nginx:stable-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./deploy/nginx/certs:/etc/nginx/certs:ro  # optional TLS certs
-    depends_on:
-      - backend
-      - frontend
-    restart: unless-stopped
-
   backend:
+    platform: linux/amd64  # Ensures correct architecture for Gunicorn
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    image: dockerlens-backend:prod
-    environment:
-      - LOG_LEVEL=INFO
-      - DOCKER_MODE=${DOCKER_MODE:-auto}   # "auto" or "mock"
-    # For local demo only: to let backend access host docker
-    # WARNING: mounting host socket gives elevated access — use only for local demos
+    container_name: dockerlens-backend
     volumes:
-      - ${DOCKER_SOCKET_BIND:-/var/run/docker.sock:/var/run/docker.sock}
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DOCKER_MODE=${DOCKER_MODE:-auto}
+    ports:
+      - "5000:5000"
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
-      # assume frontend has Dockerfile to build static
-    image: dockerlens-frontend:prod
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
+      dockerfile: Dockerfile
+    container_name: dockerlens-frontend
+    expose:
+      - "80"
 
-  cadvisor:
-    image: gcr.io/google-containers/cadvisor:latest
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+  nginx:
+    image: nginx:alpine
+    container_name: dockerlens-nginx
     ports:
-      - "8080:8080"
-    restart: unless-stopped
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
 
