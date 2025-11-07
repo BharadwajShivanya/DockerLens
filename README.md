@@ -1,72 +1,83 @@
-# DockerLens
+DockerLens: Container Observability Tool
+A full-stack application providing real-time insights into Docker containers running on your host.
+Includes a Flask backend, React frontend, and nginx reverse proxy, all containerized and managed with Docker Compose.
 
-A modular Docker management dashboard for monitoring, controlling, and visualizing Docker containers easily.
+Project Overview
+DockerLens monitors Docker containers using the Docker API, displaying container statuses, logs, and metrics through a polished user interface. The backend interacts with the Docker daemon to fetch container data, while the frontend visualizes it in an accessible way.
 
+Phased Development Roadmap & Progress
 Phase 1: Project Setup
-Create your project skeleton with backend, frontend, nginx, and docker-compose.prod.yml.
+Established the multi-component project structure with backend, frontend, nginx, and Compose files.
 
-Prepare backend Flask app and Dockerfile.
+Status: ✅ Complete
 
-Prepare frontend app and Dockerfile.
+Phase 2: Docker Compose & Builds
+Created Dockerfiles for each service.
 
-Prepare Nginx config.
+Configured Docker Compose to orchestrate services.
 
-Status: ✅ Completed
-Phase 2: Docker Compose Setup & Basic Build
-Write Docker Compose with backend, frontend, nginx services.
+Fixed volume mounts and architecture compatibility issues.
 
-Fix YAML indentation errors.
+Status: ✅ Complete
 
-Add volume for Docker socket for backend.
+Phase 3: Backend API Setup
+Developed Flask backend with REST APIs.
 
-Status: ✅ Completed
-Phase 3: Backend API and Gunicorn Setup
-Setup Gunicorn to run Flask backend.
+Integrated Gunicorn as the WSGI server.
 
-Build and run backend container with correct platform and volumes.
+Added health check endpoint /api/health.
 
-Confirm /api/health endpoint responds OK.
+Status: ✅ Complete
 
-Status: ✅ Completed
-Phase 4: Compose Network & Ports Configuration
-Expose backend port to host using ports: - "5000:5000".
+Phase 4: Networking & Port Configuration
+Exposed backend API port to host.
 
-Confirm frontend and nginx containers startup.
+Verified multi-container communication via Docker networks.
 
-Status: ✅ Completed
-Phase 5: Docker API Client Integration in Backend
-Initial integration of Docker Python SDK (docker.from_env()) in backend.
+Set up nginx as reverse proxy.
 
-Encountered socket connection errors: "Error while fetching server API version: Not supported URL scheme http+docker".
+Status: ✅ Complete
 
-Status: ⏳ In Progress
-Phase 6: Fix Docker SDK Connection Issues
-Remove DOCKER_HOST environment variable if set anywhere.
+Phase 5: Docker API Client Integration
+Mounted Docker socket inside backend container.
 
-Make sure socket /var/run/docker.sock is mounted and accessible.
+Integrated Python Docker SDK to call Docker API.
 
-Pin compatible requests and docker Python packages if necessary.
+Encountered Docker connection scheme errors due to environment issues.
 
-Fix Flask app code to recreate Docker client inside API route function with exception handling.
+Status: ✅ Complete (after environment fixes)
 
-Status: To do (next)
-Phase 7: Full Stack Integration & Testing
-Confirm backend Docker API returns container list JSON.
+Phase 6: Connection Issue Resolution
+Removed conflicting DOCKER_HOST environment variables.
 
-Confirm frontend app communicates correctly with backend APIs.
+Upgraded Python dependencies (docker SDK and requests).
 
-Status: To do
+Added error handling in backend API code for robustness.
+
+Backend APIs are now fully functional and error-free.
+
+Status: ✅ Complete
+
+What’s Next?
+Phase 7: Frontend Integration & Testing
+Ensure React or frontend app consumes backend APIs properly.
+
+Test frontend handling of container data visualization.
+
+Fix API proxy or CORS issues if any.
+
 Phase 8: Production Readiness
-Add container health checks, logging, auto-restart policies.
+Add container healthchecks and logs for resilience.
 
-Clean up environment variables, secrets management.
+Harden security including secrets handling and HTTPS.
 
-Document deployment steps and architecture.
+Optimize Dockerfiles for performance and size.
 
-Status: To do
+Document deployment and operational guidelines.
+
 Phase 9: Advanced Features & Scaling
-Add databases, caching layers, CI/CD integration.
+Add persistent storage, caching layers, databases if required.
 
-Deploy on cloud or orchestrators like Kubernetes.
+Implement CI/CD pipelines for automated testing and deployment.
 
-Status: Future work
+Plan for scaling with Kubernetes or Docker Swarm.
