@@ -84,5 +84,5 @@ Plan for scaling with Kubernetes or Docker Swarm.
 
 
 
-my goddd idk what i am doing ? at the moment  where to go , with whom to go . i should og to have some conecettion 
+my goddd idk what i am doing ? at the moment,  where to go , with whom to go . i should og to have some conecettion 
 
